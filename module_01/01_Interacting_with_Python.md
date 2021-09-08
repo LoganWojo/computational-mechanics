@@ -4,10 +4,10 @@ jupytext:
   text_representation:
     extension: .md
     format_name: myst
-    format_version: 0.12
-    jupytext_version: 1.6.0
+    format_version: 0.13
+    jupytext_version: 1.11.4
 kernelspec:
-  display_name: Python 3
+  display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
@@ -578,7 +578,23 @@ Throughout this course module, you will be drawing from the following references
     c. What is the result of the following logical operation, `volume>1000` (in inches^3)
 
 ```{code-cell} ipython3
+#1.a
+def Volume(L,W,H):
+    Vol=L*W*H
+    print("The volume of the box is {:.1f} in^3".format(Vol))
+Volume(12.5,11,14)
 
+#1.b
+def Density(L,W,H,Mass):
+    Volume=L*W*H
+    Density=Mass/Volume
+    print("The density of the box is {:.4f} lbs/in^3".format(Density))
+Density(12.5,11,14,31)
+
+#1.c
+Volume_1c=12.5*11*14
+logic= Volume_1c > 1000
+print("The result of volume>1000 returns the boolean expression {}".format(logic))
 ```
 
 2. Use the variables given below, `str1` and `str2`, and check the following 
@@ -594,6 +610,19 @@ Throughout this course module, you will be drawing from the following references
 ```{code-cell} ipython3
 str1 = 'Python'
 str2 = 'python'
+
+#2a
+print("The operation in 2a returns", str1<str2)
+
+#2b
+print("The operation in 2b returns", str1==str2)
+
+#2c
+print("The operation in 2c returns", str1>str2)
+
+#2d
+logic= not str1==str2
+print("By adding a 'not' before the operation in 2b, we can force the boolean expression to return {}".format(logic))
 ```
 
 3. The following code has an error, fix the error so that the correct result is returned:
@@ -611,7 +640,13 @@ else:
 ```
 
 ```{code-cell} ipython3
+x=1
+y=20
 
+if x<y and y==20:
+    print('y is 20 and x is less than y')
+else:
+    print('x is not less than y')
 ```
 
 4. Create a script that takes the clock hour in 24 hours and prints the clock hour with am or pm. 
@@ -624,6 +659,27 @@ if time > 12:
     print(time - 12, 'PM')
 elif time < 12:
     print(time, 'AM')
+```
+
+```{code-cell} ipython3
+def Time(hour):
+    if hour>12 and hour<24:
+        print(hour-12, 'PM')
+    elif hour<12 and hour>0:
+        print(hour, 'AM')
+    elif hour==0 or hour==24:
+        print("12 AM")
+    elif hour==12:
+        print(hour, 'PM')
+    else:
+        print('Error: hour outside of 24-hour range')
+
+Time(0)
+Time(6)
+Time(12)
+Time(18)
+Time(24)
+Time(25)
 ```
 
 ```{code-cell} ipython3
