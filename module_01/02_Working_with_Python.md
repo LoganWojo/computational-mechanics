@@ -324,6 +324,7 @@ Let's assign some arrays to variable names and perform some operations with them
 
 ```{code-cell} ipython3
 x_array = np.linspace(-1, 1, 9)
+print(x_array)
 ```
 
 Now that you've saved it with a variable name, you can do some
@@ -760,7 +761,22 @@ Pick two different operations to apply to the `xarray` and plot them the resulti
     b. Use your function to plot sin(x) and cos(x) for x=$0..2\pi$
 
 ```{code-cell} ipython3
+import numpy as np
+import matplotlib.pyplot as plt
 
+#1.a
+def sincos(x):
+    '''This function returns a sine and cosine array for the input value of x '''
+    sine_fun=np.sin(x)
+    cosine_fun=np.cos(x)
+    return sine_fun, cosine_fun
+
+#1.b
+array_x=np.linspace(0,(2*np.pi))
+array_sin,array_cos = sincos(array_x)
+plt.plot(array_x,array_sin,color='red',linestyle='-',label='sin(x)')
+plt.plot(array_x,array_cos,color='blue',linestyle='-',label='cos(x)')
+plt.legend(loc='best');
 ```
 
 2. Use a for-loop to create a variable called `A_99`, where every element is the product
@@ -773,7 +789,28 @@ of the two indices from 0 to 9 e.g. A_99[3,2]=6 and A_99[4,4]=16.
     c. Calculate the standard deviation of `A_99`
 
 ```{code-cell} ipython3
+import numpy as np
+import matplotlib.pyplot as plt
 
+#2
+rows=np.array([0,1,2,3,4,5,6,7,8,9])
+columns=rows
+
+A_99=np.zeros((10,10))
+for i in range(len(rows)):
+    for j in range(len(columns)):
+        value=rows[i]*columns[j]
+        A_99[i,j]=value
+print(A_99)
+
+#2.a
+%time
+
+#2.b + 2.c
+Mean=np.mean(A_99)
+StDev=np.std(A_99)
+print("The Mean of A_99 is {:.2f}".format(Mean))
+print("The Standard Deviation of A_99 is {:.2f}".format(StDev))
 ```
 
 3. Use the two arrays, X and Y, given below to create A_99 using numpy array math rather than a for-loop. 
@@ -787,7 +824,28 @@ of the two indices from 0 to 9 e.g. A_99[3,2]=6 and A_99[4,4]=16.
     d. create a filled contour plot of X, Y, A_99 [contourf plot documentation](https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.contourf.html)
 
 ```{code-cell} ipython3
+X, Y = np.meshgrid(np.arange(0,10), np.arange(0,10))
+X * Y
+```
 
+```{code-cell} ipython3
+import numpy as np
+import matplotlib.pyplot as plt
+
+X,Y=np.meshgrid(np.arange(0,10), np.arange(0,10))
+A_99=X*Y
+
+#3.a
+%time
+
+#3.b + 3.c
+Mean=np.mean(A_99)
+StDev=np.std(A_99)
+print("The Mean of A_99 is {:.2f}".format(Mean))
+print("The Standard Deviation of A_99 is {:.2f}".format(StDev))
+
+#3.d
+plt.contourf(X,Y,A_99,20);
 ```
 
 4. The following linear interpolation function has an error. It is supposed to return y(x) given the the two points $p_1=[x_1,~y_1]$ and $p_2=[x_2,~y_2]$. Currently, it just returns and error.
@@ -805,5 +863,18 @@ def linInterp(x,p1,p2):
 ```
 
 ```{code-cell} ipython3
+def linInterp(x,p1,p2):
+    '''linear interplation function return y(x) given the two endpoints 
+    p1=np.array([x1,y1])
+    and
+    p2=np.array([x2,y2])'''
+    
+    slope = (p2[1]-p1[1])/(p2[0]-p1[0])
+    return p1[1]+slope*(x - p1[0])
+
+ans=np.zeros((4,1))
+for i in range(len(ans)):
+    ans[i]=linInterp(i,np.array([1,2]),np.array([4,8]))
+print(ans)
 
 ```
