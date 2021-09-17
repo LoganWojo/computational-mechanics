@@ -4,10 +4,10 @@ jupytext:
   text_representation:
     extension: .md
     format_name: myst
-    format_version: 0.12
-    jupytext_version: 1.6.0
+    format_version: 0.13
+    jupytext_version: 1.11.4
 kernelspec:
-  display_name: Python 3
+  display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
@@ -516,7 +516,7 @@ First, solve for `n=2` steps, so t=[0,2]. We can time the solution to get a sens
 
 ```{code-cell} ipython3
 %%time
-n=5
+n=20
 
 v_analytical,v_numerical,t=freefall(n);
 ```
@@ -582,6 +582,22 @@ plt.ylabel('relative error')
 plt.title('Truncation and roundoff error \naccumulation in log-log plot')
 ```
 
+```{code-cell} ipython3
+n = np.arange(500, 100000, 500) # create an array from 10^1 to 10^3 with N values
+N = len(n)
+error = np.zeros(N, dtype = np.float32)    # initialize an N-valued array of relative errors
+
+for i in range(0,N):
+    v_an, v_num, t = freefall(n[i]) # return the analytical and numerical solutions to your equation
+    error[i] = np.sum((v_num[1:]-v_an[1:])/v_an[1:])/(N+1) #calculate relative error in velocity at final time t=2 s
+
+plt.loglog(n,error,'o')
+plt.xlabel('number of timesteps N')
+plt.ylabel('relative error')
+plt.title('EXAMPLE- Truncation and roundoff error between our analytical and numerical results on log-log scale')
+    
+```
+
 In the above plot "Truncation and roundoff error accumulation in log-log
 plot", you see that around $N=10^4$ steps you stop decreasing the error
 with more steps. This is because we are approaching the limit of how
@@ -601,9 +617,27 @@ In any computational solution, there will be some point of similar diminishing i
 * The definition of absolute error and relative error
 * How a numerical solution converges
 
-+++
+```{code-cell} ipython3
+#P(t+dt)= \frac{dp}{dt}*dt+P(t)
 
-# Problems
+k=1
+n=75
+t=np.linspace(0,20,n)
+dt=t[1]-t[0]
+
+pop=np.zeros(len(t))
+pop[0]=10
+
+for i in range(len(t)-1):
+    pop[i+1]=k*pop[i]*dt+pop[i]
+
+pop_an=10+np.exp(k*t)
+
+plt.plot(t,pop,'o',label='numerical');
+plt.plot(t,pop_an,label='analytical');
+```
+
+# Module 1.3 Problems
 
 1. The growth of populations of organisms has many engineering and scientific applications. One of the simplest
 models assumes that the rate of change of the population p is proportional to the existing population at any time t:
@@ -637,8 +671,9 @@ import numpy as np
 year, pop = np.loadtxt('../data/world_population_1900-2020.csv',skiprows=1,delimiter=',',unpack=True)
 print('years=',year)
 print('population =', pop)
+print(pop[1:],pop[0:-1])
+print(pop[1:]-pop[0:-1])
 ```
-
 
 ```{code-cell} ipython3
 print('average population changes 1900-1950, 1950-2000, 2000-2020')
@@ -647,8 +682,37 @@ print('average growth of 1900 - 2020')
 print(np.mean((pop[1:] - pop[0:-1])/(year[1:] - year[0:-1])))
 ```
 
-__d.__ As the number of time steps increases, the Euler approximation approaches the analytical solution, not the measured data. The best-case scenario is that the Euler solution is the same as the analytical solution.
+```{code-cell} ipython3
+print('average growth rates from 1900-1950, 1950-2000, 2000-2020 in [1/year]')
+print(1/(year[1:]-year[0:-1]))
+```
 
+```{code-cell} ipython3
+kg=0.013
+n=20
+t=np.linspace(year[0],year[3],n)
+dt=t[1]-t[0]
+
+pop_num=np.zeros(len(t))
+pop_num[0]=pop[0]
+
+for i in range(len(t)-1):
+    pop_num[i+1]=kg*pop_num[i]*dt+pop_num[i]
+
+pop_an=pop[0]*np.exp(kg*(t-t[0]))
+
+plt.plot(t,pop_num,'o',label='numerical');
+plt.plot(t,pop_an,label='analytical');
+plt.xlabel('time in years');
+plt.ylabel('population');
+plt.title('    Numerical vs Analytical Population over time plots')
+```
+
+### 1.d
+The convergence mentioned in the context of these problems is the convergence between our numerical and analytical
+solutions. Therfore, by increasing time steps of our numerical model we end up with a numericaL solution 
+which will converge on our analytical. If this analytical solution is not an accurate representation
+of the real world population, then our numerical model can not aproach said real world population
 
 +++
 
@@ -665,6 +729,7 @@ __d.__ As the number of time steps increases, the Euler approximation approaches
     c. Plot the relative error as a function of the Taylor series expansion order from first order upwards. (Hint: use method (4) in the comparison methods from the "Truncation and roundoff error accumulation in log-log plot" figure)
 
 ```{code-cell} ipython3
+import numpy as np
 from math import factorial
 def exptaylor(x,n):
     '''Taylor series expansion about x=0 for the function e^x
@@ -678,9 +743,45 @@ def exptaylor(x,n):
         for i in range(1,n):
             ex+=x**(i+1)/factorial(i+1) # add the nth-order result for each step in loop
         return ex
-        
+
+#2.a
+res_num=exptaylor(1,1)
+res_an=np.exp(1)
+rel_err=(abs((res_num-res_an)/res_an))*100
+print('The relative error between our function an the numpy result is {:.2f}%'.format(rel_err))
 ```
 
 ```{code-cell} ipython3
+res_num_n2=exptaylor(1,2)
+%time
+```
 
+```{code-cell} ipython3
+res_num_n10=exptaylor(1,10)
+%time
+```
+
+```{code-cell} ipython3
+time_slope=(4-2)/(10-2) #time/n
+n=100000
+time_for_n=time_slope*n
+print('The time for a taylor series of n=100,000 is {:.1f}µs'.format(time_for_n))
+```
+
+```{code-cell} ipython3
+n=np.arange(0, 100000, 500)
+N=len(n)
+error=np.zeros(N, dtype=np.float32)
+res_num=np.zeros(N)
+
+res_an=np.exp(1)
+
+for i in range(1,N):
+    res_num[i]=exptaylor(1,i)
+    error[i]=np.sum(np.abs(res_num[1:]-res_an)/res_an)/(N+1)
+
+plt.loglog(n,error,'o');
+plt.xlabel('number of timesteps N');
+plt.ylabel('relative error');
+plt.title('Truncation and roundoff error between our analytical and numerical results on log-log scale');
 ```

@@ -567,7 +567,7 @@ Throughout this course module, you will be drawing from the following references
 3. _Think Python: How to Think Like a Computer Scientist_ (2012). Allen Downey. Green Tea Press.  [PDF available](http://greenteapress.com/thinkpython/thinkpython.pdf)
 
 
-# Problems
+# Module 1.1 Problems
 
 1. Calculate some properties of a rectangular box that is 12.5"$\times$11"$\times$14" and weighs 31 lbs
 
@@ -680,8 +680,4 @@ Time(12)
 Time(18)
 Time(24)
 Time(25)
-```
-
-```{code-cell} ipython3
-
 ```

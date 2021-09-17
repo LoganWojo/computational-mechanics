@@ -752,7 +752,7 @@ Pick two different operations to apply to the `xarray` and plot them the resulti
 
 +++
 
-# Problems
+# Module 1.2 Problems
 
 1. Create a function called `sincos(x)` that returns two arrays, `sinx` and `cosx` that return the sine and cosine of the input array, `x`. 
 
@@ -802,6 +802,7 @@ for i in range(len(rows)):
         value=rows[i]*columns[j]
         A_99[i,j]=value
 print(A_99)
+print()
 
 #2.a
 %time
@@ -876,5 +877,4 @@ ans=np.zeros((4,1))
 for i in range(len(ans)):
     ans[i]=linInterp(i,np.array([1,2]),np.array([4,8]))
 print(ans)
-
 ```
