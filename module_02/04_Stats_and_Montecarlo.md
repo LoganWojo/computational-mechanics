@@ -5,9 +5,9 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.10.3
+    jupytext_version: 1.11.4
 kernelspec:
-  display_name: Python 3
+  display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
@@ -15,7 +15,7 @@ kernelspec:
 > __Content created under Creative Commons Attribution license CC-BY
 > 4.0, code under BSD 3-Clause License © 2020 R.C. Cooper__
 
-+++ 
++++
 
 # 04 - Statistics and Monte-Carlo Models
 
@@ -47,7 +47,6 @@ The call to `rng.random(20)` created 20 uniformly random numbers between
 0 and 1 saved as the variable `x`. Next, you can plot the histogram of
 `x`.
 
-
 ```{code-cell} ipython3
 import matplotlib.pyplot as plt
 plt.style.use('fivethirtyeight')
@@ -60,7 +59,7 @@ plt.hist(x, bins = 5,
             edgecolor = 'w')
 ```
 
-The pyplot function `hist` displays a histogram of these randomly generated numbers. 
+The pyplot function `hist` displays a histogram of these randomly generated numbers.
 
 +++
 
@@ -69,7 +68,6 @@ The pyplot function `hist` displays a histogram of these randomly generated numb
 Try generating more random numbers and plotting histograms of the results i.e. increase `10` to larger values. 
 
 What should the histogram of `x` look like if Python is generating truly random numbers?
-
 
 ```{code-cell} ipython3
 x=np.random.rand(10000)
@@ -226,9 +224,9 @@ a description of how large particles move and vibrate in fluids that
 have no buld motion. The atoms from the fluid bounce off the suspended
 particles to jiggle them randomly left and right. Take a look at [Up and
 Atom's video](https://www.youtube.com/channel/UCSIvk78tK2TiviLQn4fSHaw)
-for more information in the physics and history of the phenomenon. 
+for more information in the physics and history of the phenomenon.
 
-```{code-cell} ipyhon3
+```{code-cell} ipython3
 from IPython.display import YouTubeVideo
 YouTubeVideo('5jBVYvHeG2c')
 ```
@@ -257,7 +255,7 @@ $Delta x$ and $\Delta y$.
 the location at each step
 4. plot the results
 
-Here, you create the 100 random numbers and shift them by 0.5. 
+Here, you create the 100 random numbers and shift them by 0.5.
 
 ```{code-cell} ipython3
 rng = default_rng()
@@ -265,7 +263,8 @@ N_steps = 100
 dx = rng.random(N_steps) - 0.5
 dy = rng.random(N_steps) - 0.5
 ```
-Next, create the positions at each step. 
+
+Next, create the positions at each step.
 
 ```{code-cell} ipython3
 r = np.zeros((N_steps, 2))
@@ -273,7 +272,7 @@ r = np.zeros((N_steps, 2))
 
 Now, use
 [`np.cumsum`](https://numpy.org/doc/stable/reference/generated/numpy.cumsum.html)
-to find the final position after each step is taken. 
+to find the final position after each step is taken.
 
 ```{code-cell} ipython3
 r[:, 0] = np.cumsum(dx) # final rx position
@@ -281,7 +280,7 @@ r[:, 1] = np.cumsum(dy) # final ry position
 ```
 
 Finally, you can plot the path the particle took as it moved along its
-100 steps and its final location. 
+100 steps and its final location.
 
 ```{code-cell} ipython3
 plt.plot(r[:, 0 ], r[:, 1])
@@ -294,7 +293,7 @@ A curious result, even though we prescribed random motion, the final
 location did not end up back at the origin, where it started. __What if
 you looked at 50 particles?__ How many would end up back at the origin?
 Use a for-loop to calculate the position of 50 particles taking 100
-steps each. 
+steps each.
 
 ```{code-cell} ipython3
 num_particles = 50
@@ -330,6 +329,7 @@ Make a scaling equation to get uniformly random numbers between 10 and 20.
 _The scaling keeps the bin heights constant, but it changes the width and location of the bins in the histogram. Scaling to 10-20 shows a more extreme example._
 
 ```{code-cell} ipython3
+
 ```
 
 ### Example 3: Determine uncertainty in failure load based on geometry uncertainty
@@ -413,7 +413,7 @@ factors = np.random.rand(10000,10)-1/2 # each row represents a part and each col
 
 Now, we have created 10,000 parts with 10 uniformly random effects between -1/2-1/2. 
 
-We sum the effects and look at the final part distribution. The x-axis is labeled "A.U." for arbitrary units, we are just assuming an effect of -1/2-1/2 for each of the 10 factors.  
+We sum the effects and look at the final part distribution. The x-axis is labeled "A.U." for arbitrary units, we are just assuming an effect of -1/2-1/2 for each of the 10 factors.
 
 ```{code-cell} ipython3
 dims = np.sum(factors,axis=1)
@@ -485,6 +485,34 @@ maximum $x_{end~max}>0$. The ratio
 $\frac{x_{end~min}<0~and~x_{end~max}>0}{number~of~needles} =
 \frac{2}{\pi}$ _for large values of $number~of~needles$_.
 
+```{code-cell} ipython3
+Num_of_needles=100
+x_values=np.random.rand(Num_of_needles,1)
+Theta_values=np.random.uniform(0,(2*np.pi),Num_of_needles)
+
+#xend=[left,right]
+#end=[x+cos(theta),x-cos(theta)]
+#Xend=[min(end),max(end)]
+
+Ends_1=np.zeros(len(x_values))
+Ends_2=np.zeros(len(x_values))
+Ends_mat=np.zeros((len(x_values),2))
+for i in range(len(x_values)):
+    for j in range(1):
+        Ends_1[i]=x_values[i]-np.cos(Theta_values[i])
+        Ends_2[i]=x_values[i]+np.cos(Theta_values[i])
+        Ends_mat[i,0]=Ends_1[i]
+        Ends_mat[i,1]=Ends_2[i]
+
+bool_matrix=np.logical_and(np.min(Ends_mat,axis=1)<0,np.max(Ends_mat,axis=1)>0)
+ratio=round(np.sum(bool_matrix)/Num_of_needles,4)
+expected=round(2/np.pi,4)
+perc_err=np.abs((ratio-expected)/expected)*100
+print(ratio)
+print(expected)
+print('The percent error is {:.2f}%'.format(perc_err))
+```
+
 __2.__ 100 steel rods are going to be used to support a 1000 kg structure. The
 rods will buckle when the load in any rod exceeds the [critical buckling
 load](https://en.wikipedia.org/wiki/Euler%27s_critical_load)
@@ -523,9 +551,50 @@ def montecarlo_buckle(E,r_mean,r_std,L,N=100):
     -------
     mean_buckle_load: mean buckling load of N rods under 1000*9.81/N-Newton load
     std_buckle_load: std dev buckling load of N rods under 1000*9.81/N-Newton load
+    fail_percent: The percentage of N rods which fail under 1000*9.81/N-Newton load
     '''
+    r_rand=np.random.normal(r_mean,r_std,size=N)
     
-    return mean_buckle_load, std_buckle_load
+    P_load=1000*9.81
+    P_crit=((np.pi**3)*E*(r_rand**4))/(16*(L**2))
+    mean_P_crit=np.mean(P_crit)
+    std_P_crit=np.std(P_crit)
+    
+    fail_mat=np.zeros(len(r_rand))
+    bool_array=np.zeros(len(r_rand),dtype=bool)
+    for i in range(len(P_crit)):
+        if P_load > P_crit[i]:
+            fail_mat[i]=P_crit[i]
+        if fail_mat[i] != 0:
+            bool_array[i]= True
+            
+    fail_load=np.zeros(np.sum(bool_array))
+    bool_index=np.where(bool_array)[0]
+    
+    for j in range(len(bool_index)):
+        fail_load[j]=P_crit[bool_index[j]]
+    
+    mean_buckle_load=round(np.mean(fail_load),2)
+    std_buckle_load=round(np.std(fail_load),2)
+    fail_num=len(fail_load)
+    fail_percent=(fail_num/N)*100
+    
+    print('The mean critical load of the rods which buckle is {} N'.format(mean_buckle_load))
+    print('The standard deviation of the rods which buckle is {} N'.format(std_buckle_load))
+    print('The total percentage of {} rods with length={}m which fail is {}%'.format(N,L,fail_percent))
+    return mean_buckle_load, std_buckle_load, fail_percent
+
+montecarlo_buckle((200*(10**9)),0.01,0.001,5,N=100)
+```
+
+```{code-cell} ipython3
+montecarlo_buckle((200*(10**9)),0.01,0.001,0.35,N=100)
+montecarlo_buckle((200*(10**9)),0.01,0.001,0.36,N=100)
+montecarlo_buckle((200*(10**9)),0.01,0.001,0.37,N=100)
+montecarlo_buckle((200*(10**9)),0.01,0.001,0.38,N=100)
+montecarlo_buckle((200*(10**9)),0.01,0.001,0.39,N=100)
+
+print('The maximum length before a failure rate of about 2.5% seemes to be around 0.35 to 0.4 meters long')
 ```
 
 __3.__ Generate your own normal distribution using uniformly random numbers between -1/2 and 1/2. 
@@ -537,6 +606,63 @@ __b.__ What is the effect of changing the number of samples?
 *Hint: for a-b try plotting histograms of the results.*
 
 __c.__ How would you change the mean in your generated distribution?
+
+```{code-cell} ipython3
+N=1000
+x=np.random.uniform(-0.5,0.5,N)
+mean=np.mean(x)
+Std=np.std(x)
+
+Dist=np.random.normal(mean,Std,size=N)
+
+bins=50
+plt.hist(Dist,bins);
+```
+
+```{code-cell} ipython3
+N=1000*10^3
+x=np.random.uniform(-0.5,0.5,N)
+mean=np.mean(x)
+Std=np.std(x)
+
+Dist=np.random.normal(mean,Std,size=N)
+
+bins=50
+plt.hist(Dist,bins);
+```
+
+```{code-cell} ipython3
+N=1000
+x=np.random.uniform(-0.5,0.5,N)
+mean=np.mean(x)
+Std=np.std(x)
+
+Dist=np.random.normal(mean,Std,size=N)
+
+bins=100
+plt.hist(Dist,bins);
+```
+
+```{code-cell} ipython3
+N=1000*10^3
+x=np.random.uniform(-0.5,6,N)
+mean=np.mean(x)
+Std=np.std(x)
+
+Dist=np.random.normal(mean,Std,size=N)
+
+bins=50
+plt.hist(Dist,bins);
+```
+
+# 3a
+By comparing graphs 1 and 3, we get an idea about how changing the number of bins effects the sample size, it is an assumption that the term factors refers to bins. By changing the number of bins, but keeping the sample size constant, we see that the data retains it's general shape, but simply looks more "noisy". However, by carful analysis of the frequency axis, we see that the frequency values for each bin dropped significantly, almost by a factor of 2. This means that the standard deviation is allowed to have a larger impact on the histogram since the points are more accurate grouped together by value instead of being "rounded" to fit in a large bin.
+
+# 3b
+By comparing graphs 1 and 2, we get an idea on how the number of sample sizes effects the overall look of the distribution on a histogram. Overall, we see that the frequency values of the bins increased proportionally to the number of samples, which is to be expected. We also see that since the nnumber of bins was kept constant, the overall distribution shape did not change much. The shape did however become more rounded, and form a much clearer "bell curve" like what we usually expect from a normal distribution. 
+
+# 3c
+The easiest way to change the mean of the normal distribution is to change the bounds of the uniform distribution which we used to form our random numbers. By increasing the bounds of the uniform distribution one way or the other, you effectively change the mean of the numbers generated which is easily seen by the normal distribution histogram.
 
 ```{code-cell} ipython3
 
